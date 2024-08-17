@@ -22,17 +22,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
-    <link href="./assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="./assets/plugins/perfectscroll/perfect-scrollbar.css" rel="stylesheet">
-    <link href="./assets/plugins/pace/pace.css" rel="stylesheet">
+    <link href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/plugins/perfectscroll/perfect-scrollbar.css" rel="stylesheet">
+    <link href="../assets/plugins/pace/pace.css" rel="stylesheet">
 
 
     <!-- front page Styles -->
-    <link href="./assets/css/main.min.css" rel="stylesheet">
-    <link href="./assets/css/custom.css" rel="stylesheet">
+    <link href="../assets/css/main.min.css" rel="stylesheet">
+    <link href="../assets/css/custom.css" rel="stylesheet">
 
-    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/neptune.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/neptune.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/neptune.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/neptune.png" />
 
 </head>
 
@@ -45,15 +45,14 @@
             <div class="logo">
                 <a href="index.html">Neptune</a>
             </div>
-            <p class="auth-description">Pleas enter your credentials to create an account.<br>Already have an account? <a href="sign-in.html">Sign In</a></p>
-
-            <form action="register_post.php" method="POST">
+            <p class="auth-description">Pleas enter your credentials to create an account.<br>Already have an account? <a href="loging.php">Sign In</a></p>
+            <form action="register_post.php" method="post">
 
                 <div class="auth-credentials m-b-xxl">
 
 
                     <label for="signUpUsername" class="form-label">Name</label>
-                    <input name="name" type="text" class="form-control m-b-md" aria-describedby="signUpUsername" placeholder="Enter your Name">
+                    <input name="name" type="text" class="form-control m-b-md" aria-describedby="signUpUsername" placeholder="Enter your Name" value = "<?php if(isset($_SESSION["old_name"])) { echo $_SESSION["old_name"]; } unset($_SESSION["old_name"]);?>">
                     
                     <!-- name field error start -->
                     <?php if (isset($_SESSION["name_error"])) {
@@ -63,7 +62,7 @@
                     <!-- name field error end -->
 
                     <label for="signUpEmail" class="form-label">Email address</label>
-                    <input name="email" type="text" class="form-control m-b-md" aria-describedby="signUpEmail" placeholder="example@neptune.com">
+                    <input name="email" type="text" class="form-control m-b-md" aria-describedby="signUpEmail" placeholder="example@neptune.com" value = "<?php if(isset($_SESSION["old_email"])) { echo $_SESSION["old_email"]; } unset($_SESSION["old_email"]);?>">
 
                     <!-- email field error start -->
                     <?php if (isset($_SESSION["email_error"])) {
@@ -72,9 +71,17 @@
                     <?php } unset($_SESSION["email_error"]); ?>
                       <!-- email field error end -->
 
+                     <!-- duplicate error start -->
+                     <?php if (isset($_SESSION['duplicate'])) { ?>
+                        <div id="emailHelp" class="form-text m-b-md text-danger"> <?php echo $_SESSION['duplicate']; ?> </div>
+                    <?php } unset($_SESSION["duplicate"]); ?>
+                    <!-- duplicate error end -->
+
+
                     <label for="signUpPassword" class="form-label">Password</label>
-                    <input id="myInput" name="password" type="password" class="form-control" aria-describedby="signUpPassword" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;">
-                    <input class="my-3 lead" type="checkbox" onclick="myFunction()"> Show Password
+                    <input id="myInput" name ="password" type ="password" class ="form-control" aria-describedby="signUpPassword" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" value = "<?php if(isset($_SESSION["old_password"])) { echo $_SESSION["old_password"]; } unset($_SESSION["old_password"] );?>">
+                    <input class ="my-3 lead" type ="checkbox" onclick ="myFunction()"> Show Password
+                    
                     <!-- password field error start -->
                     <?php if (isset($_SESSION["password_error"])) {
                     ?>
@@ -85,8 +92,7 @@
                     <label for="signUpPassword" class="form-label">Confirm Password</label>
                     <input name="c_password" type="password" class="form-control" aria-describedby="signUpPassword" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;">
                     <!-- Confirm_password field error start -->
-                    <?php if (isset($_SESSION["c_password_error"])) {
-                    ?>
+                    <?php if (isset($_SESSION["c_password_error"])) {  ?>
                         <div id="emailHelp" class="form-text m-b-md text-danger"> <?php echo $_SESSION["c_password_error"]; ?> *</div>
                     <?php } unset($_SESSION["c_password_error"]); ?>
                     <!-- Confirm_password filed error end -->
@@ -96,6 +102,7 @@
                 <div class="auth-submit">
                     <button name="submit_btn" class="btn btn-primary">Sign Up</button>
                 </div>
+
             </form>
 
             <div class="divider"></div>
@@ -103,12 +110,12 @@
     </div>
 
     <!-- Javascripts -->
-    <script src="./assets/plugins/jquery/jquery-3.5.1.min.js"></script>
-    <script src="./assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <script src="./assets/plugins/perfectscroll/perfect-scrollbar.min.js"></script>
-    <script src="./assets/plugins/pace/pace.min.js"></script>
-    <script src="./assets/js/main.min.js"></script>
-    <script src="./assets/js/custom.js"></script>
+    <script src="../assets/plugins/jquery/jquery-3.5.1.min.js"></script>
+    <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/plugins/perfectscroll/perfect-scrollbar.min.js"></script>
+    <script src="../assets/plugins/pace/pace.min.js"></script>
+    <script src="../assets/js/main.min.js"></script>
+    <script src="../assets/js/custom.js"></script>
 
     <!-- custom js function-->
 

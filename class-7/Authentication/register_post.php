@@ -1,8 +1,10 @@
 <?php
 
-session_start();
+    require "../config/database.php";
 
-require"./config/database.php";
+    session_start();
+
+
 
 // print_r($_POST)
 
@@ -37,18 +39,18 @@ if (isset($_POST["submit_btn"])) {
     if (!$name) {
         $_SESSION["name_error"] = "Name Field is Required!!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } elseif (!ctype_alpha($name)) {
         $_SESSION["name_error"] = "We can't use any numerical character!!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } elseif (strlen($name) >= 30) {
         $_SESSION["name_error"] = "We can't use length 30 grater than!!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     }else{
         $_SESSION["old_name"] = $name;
-        header("location: registration.php");
+        header("location:registration.php");
     }
 
 
@@ -65,14 +67,14 @@ if (isset($_POST["submit_btn"])) {
     if (!$email) {
         $_SESSION["email_error"] = "email Field is Required!!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } elseif (!preg_match($email_regex, $email)) {
         $_SESSION["email_error"] = "Invalid email provide!!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     }else{
         $_SESSION["old_email"] = $email;
-        header("location: registration.php");
+        header("location:registration.php");
     }
 
 
@@ -83,7 +85,7 @@ if (isset($_POST["submit_btn"])) {
     $password = $_POST["password"];
 
 
-    // email regex 
+    // password regex 
     $password_regex_length = '/^(?=\S{8,})/';
     $password_regex_uppercase = '/^(?=\S*[A-Z])/';
     $password_regex_lowercase = '/^(?=\S*[a-z])/';
@@ -94,31 +96,31 @@ if (isset($_POST["submit_btn"])) {
     if (!$password) {
         $_SESSION['password_error'] = "Password Field is Required!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } else if (!preg_match($password_regex_length, $password)) {
         $_SESSION['password_error'] = "Password must be minimum 8 characters length!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } else if (!preg_match($password_regex_uppercase, $password)) {
         $_SESSION['password_error'] = "Password must be at least one uppercase letter!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } else if (!preg_match($password_regex_lowercase, $password)) {
         $_SESSION['password_error'] = "Password must be at least one lowercase letter!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } else if (!preg_match($password_regex_number, $password)) {
         $_SESSION['password_error'] = "Password must be at least one number!!";
         $flag = true;
 
-        header("location: registration.php");
+        header("location:registration.php");
     } else if (!preg_match($password_regex_special, $password)) {
         $_SESSION['password_error'] = "Password must be have one special character!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     }else{
         $_SESSION["old_password"] = $password;
-        header("location: registration.php");
+        header("location:registration.php");
     }
 
 
@@ -133,23 +135,32 @@ if (isset($_POST["submit_btn"])) {
     if (!$c_password) {
         $_SESSION['c_password_error'] = "Password Field is Required!!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     } elseif ($c_password != $password) {
         $_SESSION['c_password_error'] = "Confirm password credential doesn't match !!";
         $flag = true;
-        header("location: registration.php");
+        header("location:registration.php");
     }
 
-
-    if ($flag) {
-        echo "khrap";
-    } else {
-        $encrypt_pass = sha1($password);
-        $createQuery = "INSERT INTO `users`( name, email, password) VALUES ('$name', '$email', '$encrypt_pass')";
-        mysqli_query($db, $createQuery);
-        $_SESSION['register_success'] = "Registration Complete !!";
-        $_SESSION['register_email'] = "$email";
-        $_SESSION['register_password'] = "$password";
-        header("location: login.php");
-    }
+    
+     // duplicate email validation
+     $email_query = "SELECT COUNT(*) AS result FROM users WHERE email='$email'";
+     $connect = mysqli_query($db, $email_query);
+     $result = mysqli_fetch_assoc($connect)['result'];
+     if ($flag) {
+         echo "wrong";
+     } else {
+         if ($result > 0) {
+             $_SESSION['duplicate'] = "This email already have..!!";
+             header("location: registration.php");
+         } else {
+             $encrypt_pass = sha1($password);
+             $createQuery = "INSERT INTO users(name,email,password) VALUES ('$name','$email','$encrypt_pass')";
+             mysqli_query($db, $createQuery);
+             $_SESSION["register_success"] = "Registration Complete..!!";
+             $_SESSION['register_email'] = "$email";
+             $_SESSION['register_password'] = "$password";
+             header("location: login.php");
+         }
+     }
 }
