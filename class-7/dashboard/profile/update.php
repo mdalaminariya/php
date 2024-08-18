@@ -1,13 +1,15 @@
+
 <?php
 
 include "../../config/database.php";
 session_start();
+$id =  $_SESSION['auth_id'];
 
 
 // name update
 if (isset($_POST['name_btn'])) {
 
-    $id = $_SESSION['auth_id'];
+    $id =  $_SESSION['auth_id'];
     $name = $_POST['name'];
     $name = preg_replace('/\s+/', ' ', $name);
     $name = str_replace(' ', '', $name);
@@ -39,8 +41,11 @@ if (isset($_POST['name_btn'])) {
 // email update
 if (isset($_POST['email_btn'])) {
 
-    $id = $_SESSION['auth_id'];
+    // email update
+    $id =  $_SESSION['auth_id'];
     $email = $_POST['email'];
+
+    // email regex 
     $email_regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';
 
 
@@ -61,11 +66,9 @@ if (isset($_POST['email_btn'])) {
 }
 
 
-?>
-
-<?php
+// password update
 if (isset($_POST['password_btn'])) {
-    $id = $_SESSION['auth_id'];
+    $id =  $_SESSION['auth_id'];
     $old_password = $_POST['old_password'];
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
@@ -132,7 +135,7 @@ if (isset($_POST['password_btn'])) {
         header("location: profile.php");
     }
 
-    // confirm password validation
+    // confirm  password validation
     if (!$confirm_password) {
         $_SESSION['confirm_error'] = "Password Field is Required!!";
         header("location: profile.php");
@@ -140,7 +143,7 @@ if (isset($_POST['password_btn'])) {
         $_SESSION['confirm_error'] = "Confirm password credential doesn't match !!";
         header("location: profile.php");
     } else {
-        $_SESSION["confirm_update"] = "Email successfully update !!!";
+        $_SESSION["confirm_update"] = "Password successfully update !!!";
         $flag = true;
         header("location: profile.php");
     }
@@ -158,11 +161,11 @@ if (isset($_POST['password_btn'])) {
                     $encrypt = sha1($new_password);
                     $query = "UPDATE users SET password='$encrypt' WHERE id='$id'";
                     mysqli_query($db, $query);
-                    $_SESSION["pass_update"] = "ok!!!";
-                header("location: profile.php");
+                    $_SESSION["pass_update"] = "Password successfully update!!!";
+                    header("location: profile.php");
                 }
             } else {
-                $_SESSION["pass_error"] = "your giver old password doesn't match with our records !!!";
+                $_SESSION["pass_error"] = "your giver  old password doesn't match with our records !!!";
                 header("location: profile.php");
             }
         } else {
@@ -172,32 +175,38 @@ if (isset($_POST['password_btn'])) {
     }
 }
 
-if (isset($_POST['picture_btn'])) {
 
-    if (!$image) {
-        $_SESSION['image_error'] = "Image Field is Required!!";
-        header("location: profile.php");
-       }else{
-        if ($image) {
-            $explode = explode('.', $image);
-            $extension = end($explode);
-            $custom_name_img = $_SESSION['auth_id'].'-'.$_SESSION['auth_name'].'-'.date("d-m-Y").".".$extension;
-            $local_path = "../../public/profile/".$custom_name_img;
-    
-            if (move_uploaded_file($tmp_img, $local_path)) {
-                $query = "UPDATE users SET image='$custom_name_img' WHERE id='$id'";
-                mysqli_query($db, $query);
-                $_SESSION["image_update"] = "Password successfully update!!!";
-                header("location: profile.php");
-            }else {
-                $_SESSION["image_error"] = "your giver old password doesn't match with our records !!!";
-                header("location: profile.php");
-            }
+
+// name update
+if (isset($_POST['image_btn'])) {
+    $image = $_FILES['image']['name'];
+    $tmp_img = $_FILES['image']['tmp_name'];
+
+   if (!$image) {
+    $_SESSION['image_error'] = "Image Field is Required!!";
+    header("location: profile.php");
+   }else{
+    if ($image) {
+        $explode = explode('.', $image);
+        $extension = end($explode);
+        $custom_name_img = $_SESSION['auth_id'].'-'.$_SESSION['auth_name'].'-'.date("d-m-Y").".".$extension;
+        $local_path = "../../public/profile/".$custom_name_img;
+
+        if (move_uploaded_file($tmp_img, $local_path)) {
+            $query = "UPDATE users SET image='$custom_name_img' WHERE id='$id'";
+            mysqli_query($db, $query);
+            $_SESSION["image_update"] = "Image successfully upadted!!!";
+            header("location: profile.php");
+        }else {
+            $_SESSION["image_error"] = "your giver  old password doesn't match with our records !!!";
+            header("location: profile.php");
         }
-       }
+    }
+   }
+    
 }
 
 
 
-?>
 
+?>

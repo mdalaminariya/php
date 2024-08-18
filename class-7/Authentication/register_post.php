@@ -1,166 +1,85 @@
 <?php
+include "../config/database.php";
 
-    require "../config/database.php";
+include "../dashboard/master/header.php";
 
-    session_start();
+$users_query = "select * FROM users";
 
+$users = mysqli_query($db, $users_query);
+?>
+<!-- content start -->
 
+<div class="row">
+    <div class="col">
+        <div class="page-description">
+            <h1>Dashboard</h1>
+        </div>
+    </div>
+</div>
 
-// print_r($_POST)
+<div class="row">
+    <div class="col-12">
+        <?php if (isset($_SESSION['temp_name'])) :  ?>
+            <div class="alert alert-custom" role="alert">
+                <div class="custom-alert-icon icon-dark"><i class="material-icons-outlined">done</i></div>
+                <div class="alert-content">
+                    <span class="alert-title">Welcome Chief Mr. <span class="m-1"><?php echo $_SESSION['temp_name']; ?></span> </span>
+                    <span class="alert-text">Email is <span class="m-1"><?php echo $_SESSION['auth_email']; ?></span> </span>
+                </div>
+            </div>
+        <?php endif;
+        unset($_SESSION['temp_name']); ?>
+    </div>
+</div>
 
-if (isset($_POST["submit_btn"])) {
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                User List
+            </div>
+            <div class="card-body" style="overflow-y: scroll; height: 300px;">
+                <div class="example-content">
+                    <table class="table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $number = 1;
+                            $id = $_SESSION['auth_id'];
+                            ?>
 
-
-
-
-    $flag = false;
-
-    // name validation 
-
-    // ***problem-1
-    // $v = $_POST["name"];
-    // $values = explode(" ", $v);
-    // $name = "";
-    // foreach($values as $value){
-    // $value .= "$value";
-    // $name = strtolower($value);
-    // }
-
-
-
-    // ***problem-2
-
-    $name = trim($_POST["name"]);
-    $name = preg_replace('/\s+/', ' ', $name);
-    $name = str_replace(' ', '', $name);
-
-    $str_len = strlen($name);
-
-    if (!$name) {
-        $_SESSION["name_error"] = "Name Field is Required!!!";
-        $flag = true;
-        header("location:registration.php");
-    } elseif (!ctype_alpha($name)) {
-        $_SESSION["name_error"] = "We can't use any numerical character!!!";
-        $flag = true;
-        header("location:registration.php");
-    } elseif (strlen($name) >= 30) {
-        $_SESSION["name_error"] = "We can't use length 30 grater than!!!";
-        $flag = true;
-        header("location:registration.php");
-    }else{
-        $_SESSION["old_name"] = $name;
-        header("location:registration.php");
-    }
-
-
-
-    // email validation
-
-    $email = $_POST["email"];
-
-
-    // email regex 
-    $email_regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';
-
-
-    if (!$email) {
-        $_SESSION["email_error"] = "email Field is Required!!!";
-        $flag = true;
-        header("location:registration.php");
-    } elseif (!preg_match($email_regex, $email)) {
-        $_SESSION["email_error"] = "Invalid email provide!!!";
-        $flag = true;
-        header("location:registration.php");
-    }else{
-        $_SESSION["old_email"] = $email;
-        header("location:registration.php");
-    }
+                            <?php foreach ($users as $user) :
+                                if ($user['id'] == $id) {
+                                    continue;
+                                }
+                            ?>
+                                <tr>
+                                    <th scope="row"><?= $number++ ?></th>
+                                    <td><?= $user['name'] ?></td>
+                                    <td><?= $user['email'] ?></td>
+                                    <td>@mdo</td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
 
-    // password validation
+<!-- content end -->
 
-    $password = $_POST["password"];
-
-
-    // password regex 
-    $password_regex_length = '/^(?=\S{8,})/';
-    $password_regex_uppercase = '/^(?=\S*[A-Z])/';
-    $password_regex_lowercase = '/^(?=\S*[a-z])/';
-    $password_regex_number = '/^(?=\S*[\d])/';
-    $password_regex_special = '/^(?=\S*[\W])/';
-
-
-    if (!$password) {
-        $_SESSION['password_error'] = "Password Field is Required!!";
-        $flag = true;
-        header("location:registration.php");
-    } else if (!preg_match($password_regex_length, $password)) {
-        $_SESSION['password_error'] = "Password must be minimum 8 characters length!!";
-        $flag = true;
-        header("location:registration.php");
-    } else if (!preg_match($password_regex_uppercase, $password)) {
-        $_SESSION['password_error'] = "Password must be at least one uppercase letter!!";
-        $flag = true;
-        header("location:registration.php");
-    } else if (!preg_match($password_regex_lowercase, $password)) {
-        $_SESSION['password_error'] = "Password must be at least one lowercase letter!!";
-        $flag = true;
-        header("location:registration.php");
-    } else if (!preg_match($password_regex_number, $password)) {
-        $_SESSION['password_error'] = "Password must be at least one number!!";
-        $flag = true;
-
-        header("location:registration.php");
-    } else if (!preg_match($password_regex_special, $password)) {
-        $_SESSION['password_error'] = "Password must be have one special character!!";
-        $flag = true;
-        header("location:registration.php");
-    }else{
-        $_SESSION["old_password"] = $password;
-        header("location:registration.php");
-    }
-
-
-
-
-
-    // Confirm Password validation
-
-    $c_password = $_POST["c_password"];
-
-
-    if (!$c_password) {
-        $_SESSION['c_password_error'] = "Password Field is Required!!";
-        $flag = true;
-        header("location:registration.php");
-    } elseif ($c_password != $password) {
-        $_SESSION['c_password_error'] = "Confirm password credential doesn't match !!";
-        $flag = true;
-        header("location:registration.php");
-    }
-
-    
-     // duplicate email validation
-     $email_query = "SELECT COUNT(*) AS result FROM users WHERE email='$email'";
-     $connect = mysqli_query($db, $email_query);
-     $result = mysqli_fetch_assoc($connect)['result'];
-     if ($flag) {
-         echo "wrong";
-     } else {
-         if ($result > 0) {
-             $_SESSION['duplicate'] = "This email already have..!!";
-             header("location: registration.php");
-         } else {
-             $encrypt_pass = sha1($password);
-             $createQuery = "INSERT INTO users(name,email,password) VALUES ('$name','$email','$encrypt_pass')";
-             mysqli_query($db, $createQuery);
-             $_SESSION["register_success"] = "Registration Complete..!!";
-             $_SESSION['register_email'] = "$email";
-             $_SESSION['register_password'] = "$password";
-             header("location: login.php");
-         }
-     }
-}
+<?php
+include "../dashboard/master/footer.php";
+?>
